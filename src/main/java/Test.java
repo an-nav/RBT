@@ -2,7 +2,7 @@ public class Test {
     public static void main(String[] args) {
         RBTree<Integer, Integer> rbTree = new RBTree<>();
 
-        for(int i = 0; i <= 58; i++ ){
+        for(int i = 0; i <= 26; i++ ){
             rbTree.put(i, i);
         }
         // bst.delete(3);
