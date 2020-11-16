@@ -23,8 +23,9 @@ public class RBT {
     }
 
     private boolean isRed(TreeNode node){
-        if(node == null)
+        if(node == null) {
             return false;
+        }
         return node.color == RED;
     }
 
@@ -65,12 +66,15 @@ public class RBT {
 
     //修复红色右节点以及一个节点和两条红链接相连
     private TreeNode fixUp(TreeNode node) {
-        if (!isRed(node.left) && isRed(node.right))
+        if (!isRed(node.left) && isRed(node.right)) {
             node = rotateWithRight(node);
-        if (isRed(node.left) && isRed(node.left.left))
+        }
+        if (isRed(node.left) && isRed(node.left.left)) {
             node = rotateWithLeft(node);
-        if (isRed(node.left) && isRed(node.right))
+        }
+        if (isRed(node.left) && isRed(node.right)) {
             flipColors(node);
+        }
         return node;
     }
 
@@ -78,31 +82,35 @@ public class RBT {
         return get(root, key);
     }
     private int get(TreeNode node, String key){
-        if(node == null)
+        if(node == null) {
             return -1;
+        }
         int cmp = key.compareTo(node.key);
-        if(cmp < 0)
+        if(cmp < 0) {
             return get(node.left, key);
-        else if(cmp > 0)
+        } else if(cmp > 0) {
             return get(node.right, key);
-        else
+        } else {
             return node.value;
+        }
     }
     public void insert(String key, int value){
         root = insert(root, key, value);
         root.color = BLACK;//根节点都是黑色
     }
     private TreeNode insert(TreeNode node, String key, int value){
-        if( node == null)
+        if( node == null) {
             return new TreeNode(key, value, RED);
+        }
 
         int cmp = key.compareTo(node.key);
-        if(cmp < 0)
+        if(cmp < 0) {
             node.left = insert(node.left, key, value);
-        else if(cmp > 0)
+        } else if(cmp > 0) {
             node.right = insert(node.right, key, value);
-        else
+        } else {
             node.value = value;
+        }
 
         //旋转
 //      if(!isRed(node.left) && isRed(node.right))//左链接为黑，右链接为红，则右旋转
@@ -117,20 +125,24 @@ public class RBT {
 
     //找出最小键
     private TreeNode min(TreeNode node){
-        while(node.left != null)
+        while(node.left != null) {
             node = node.left;
+        }
         return node;
     }
 
     //删除最小键
     private TreeNode deleteMin(TreeNode node) {
         //递归结束条件，到达左边界
-        if (node.left == null)
+        if (node.left == null) {
             return null;
+        }
 
-        //保证node或node.left为红节点，注意是从父节点入手
-        if (!isRed(node.left) && !isRed(node.left.left))
+        // 保证node或node.left为红节点，注意是从父节点入手
+        // 要删除的 key 必须存在于一个 3-节点或一个 4-节点中
+        if (!isRed(node.left) && !isRed(node.left.left)) {
             node = moveRedLeft(node);
+        }
 
         //递归地在左子树中删除
         node.left = deleteMin(node.left);
@@ -201,16 +213,20 @@ public class RBT {
 //      int cmp = key.compareTo(node.key);//不可以这样，因为后面有旋转操作，可能改变了树的结构，
         if(key.compareTo(node.key) < 0){//递归在左子树中删除
             if(!isRed(node.left) && !isRed(node.left.left))//站在2-3树的角度看，确保删除的节点不为2节点
+            {
                 node = moveRedLeft(node);
+            }
             node.left = delete(node.left, key);
         } else{
             //确保在右子树中能出现红色右孩子
-            if(isRed(node.left))
+            if(isRed(node.left)) {
                 node = rotateWithLeft(node);
+            }
 
             //待删除的节点在树底
-            if(key.compareTo(node.key) == 0 && node.right == null)
+            if(key.compareTo(node.key) == 0 && node.right == null) {
                 return null;
+            }
             //待删除的节点不在树底
             if(key.compareTo(node.key) == 0){
                 TreeNode temp = min(node.right);
@@ -220,7 +236,9 @@ public class RBT {
             } else{//递归在右子树中删除
                 //若把 递归在右子树中删除 放在  等于  之前，node.right.left可能会出现空指针异常，因为缺少递归结束判断条件
                 if(!isRed(node.right) && !isRed(node.right.left))//确保删除的节点不为2节点，
+                {
                     node = moveRedRight(node);
+                }
                 node.right = delete(node.right, key);
             }
         }

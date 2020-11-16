@@ -262,7 +262,7 @@ public class BST<Key extends Comparable<Key>, Value> {
             // 详见 《算法》 P 274
             Node t = node;
             node = min(t.right);
-            node.right = deleteMin(node.right);
+            node.right = deleteMin(t.right);
             node.left = t.left;
         }
         node.N = 1 + size(node.left) + size(node.right);

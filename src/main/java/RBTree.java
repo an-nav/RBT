@@ -323,6 +323,7 @@ public class RBTree<Key extends Comparable<Key>, Value> {
     private Node moveRedLeft(Node node){
         // 假设节点 node 为红色， node.left 和 node.left.left 都是黑色
         // 将 node.left 或者 node.left 的子节点之一变红
+        // 被删除的节点必须存在于一个 3-节点或者 4-节点中
         flipColor(node);
         if (isRed(node.right.left)){
             node.right = rotateRight(node.right);
@@ -346,11 +347,17 @@ public class RBTree<Key extends Comparable<Key>, Value> {
     private Node balance(Node node){
         // if (isRed(node.right)) node = rotateLeft(node);
         // 红色的右节点
-        if( isRed(node.right) && !isRed(node.left) ) node = rotateLeft(node);
+        if( isRed(node.right) && !isRed(node.left) ) {
+            node = rotateLeft(node);
+        }
         // 连续的红节点
-        if( isRed(node.left) && isRed(node.left.left) ) node = rotateRight(node);
+        if( isRed(node.left) && isRed(node.left.left) ) {
+            node = rotateRight(node);
+        }
         // 俩个子节点都为红节点
-        if( isRed(node.left) && isRed(node.right) ) flipColor(node);
+        if( isRed(node.left) && isRed(node.right) ) {
+            flipColor(node);
+        }
         node.N = size(node.left) + size(node.right) + 1;
         return node;
     }
@@ -398,16 +405,20 @@ public class RBTree<Key extends Comparable<Key>, Value> {
             root.color = RED;
         }
         root = deleteMax(root);
-        if(!isEmpty()) root.color = BLACK;
+        if(!isEmpty()) {
+            root.color = BLACK;
+        }
     }
 
     private Node delete(Node node, Key key){
-        //不可以这样，因为后面有旋转操作，可能改变了树的结构，
-        // int cmp = key.compareTo(node.key);
+        // int cmp = key.compareTo(node.key); 不可以这样，因为后面有旋转操作，可能改变了树的结构，
         if( key.compareTo(node.key) < 0){
+            // 在左子树中 按照 deleteMin 方法进行删除
             if( !isRed(node.left) && !isRed(node.left.left) ){
+                // 要删除的 key 必须处在一个 3-节点 或 4-节点中，即其必须是一个红节点
                 node = moveRedLeft(node);
             }
+            // 改变节点结构后当前节点的左节点在当前递归中为最小节点
             node.left = delete(node.left, key);
         }else{
             if( isRed(node.left) ){
@@ -417,12 +428,15 @@ public class RBTree<Key extends Comparable<Key>, Value> {
                 return null;
             }
             if( key.compareTo(node.key) == 0 ){
+                // 用后继节点（右子树中的最小节点）代替当前节点
+                // BST 的删除方法
                 // 右子树中最小的节点
                 Node minNode = min(node.right);
                 node.val = minNode.val;
                 node.key = minNode.key;
                 node.right = deleteMin(node.right);
             }else{
+                // 在右子树中 按照 deleteMax 方法进行删除
                 if( !isRed(node.right) && !isRed(node.right.left) ){
                     node = moveRedRight(node);
                 }
@@ -437,7 +451,9 @@ public class RBTree<Key extends Comparable<Key>, Value> {
             root.color = RED;
         }
         root = delete(root, key);
-        if ( !isEmpty() ) root.color = BLACK;
+        if ( !isEmpty() ) {
+            root.color = BLACK;
+        }
     }
 
     public void layerTraversal(){
@@ -449,10 +465,12 @@ public class RBTree<Key extends Comparable<Key>, Value> {
             while ( i < n ){
                 Node node = queue.poll();
                 System.out.print(node.key + ": " + node.color + "\t");
-                if(node.left != null)
+                if(node.left != null) {
                     queue.add(node.left);
-                if (node.right != null)
+                }
+                if (node.right != null) {
                     queue.add(node.right);
+                }
                 i += 1;
             }
             System.out.println();
