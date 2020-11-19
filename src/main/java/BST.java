@@ -1,4 +1,5 @@
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 public class BST<Key extends Comparable<Key>, Value> {
@@ -9,11 +10,16 @@ public class BST<Key extends Comparable<Key>, Value> {
         return size(root);
     }
 
-    private int size(Node x){
-        if( x == null ){
+    /**
+     *
+     * @param node 当前子树的根节点
+     * @return 以 node 为根节点的子树的节点数量
+     */
+    private int size(Node node){
+        if( node == null ){
             return 0;
         }else{
-            return x.N;
+            return node.N;
         }
     }
 
@@ -256,7 +262,7 @@ public class BST<Key extends Comparable<Key>, Value> {
             }
             // 当前节点有俩个子节点
             // 1 将当前节点保存为 t
-            // 2 将 node 只想 min(t.right)
+            // 2 将 node 指向 min(t.right)
             // 3 将 node.right 指向 deleteMin(node.right)
             // 4 将 node.left 指向 t.left
             // 详见 《算法》 P 274
@@ -307,6 +313,51 @@ public class BST<Key extends Comparable<Key>, Value> {
         }
     }
 
+    public void layerTraversal(){
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()){
+            int n = queue.size();
+            int i = 0;
+            while ( i < n ){
+                Node node = queue.poll();
+                System.out.print(node.key + "\t");
+                if(node.left != null)
+                    queue.add(node.left);
+                if (node.right != null)
+                    queue.add(node.right);
+                i += 1;
+            }
+            System.out.println();
+        }
+    }
+
+    public void inorderTraversal(){
+        List<Key> list = new ArrayList<>();
+        inorderTraversal(root, list);
+        for (Key key : list) {
+            System.out.print(key + "\t");
+        }
+        System.out.println("\n");
+    }
+
+    private void inorderTraversal(Node node, List<Key> res){
+        if(node == null){
+            return;
+        }
+        inorderTraversal(node.left, res);
+        res.add(node.key);
+        inorderTraversal(node.right, res);
+    }
+
+    /**
+     * Node 内部类，表示 BST 中的一个节点
+     * Key ： 键
+     * Val ： 值
+     * left：左孩子
+     * right：右孩子
+     * N：以该节点为根节点的子树共有多少个节点
+     */
     private class Node{
         private Key key;
         private Value val;
@@ -319,4 +370,5 @@ public class BST<Key extends Comparable<Key>, Value> {
             N = n;
         }
     }
+    
 }
